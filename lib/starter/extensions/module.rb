@@ -5,16 +5,6 @@ module Starter
 
     module Module
 
-      def self.create_instance_methods(mod)
-        self.local_methods(mod).each do |method_name|
-          mod.module_eval <<-METHOD, __FILE__, __LINE__
-            def #{method_name}(*args)
-              #{mod}.#{method_name}(self, *args)
-            end
-          METHOD
-        end
-      end
-      
       def self.local_methods(mod)
         mod.methods.select do |m|
           owner = mod.method(m).owner
@@ -29,13 +19,17 @@ module Starter
         end
       end
 
-      def local_methods
-        Starter::Extensions::Module.local_methods(self)
+      def self.create_instance_methods(mod)
+        self.local_methods(mod).each do |method_name|
+          mod.module_eval <<-METHOD, __FILE__, __LINE__
+            def #{method_name}(*args)
+              #{mod}.#{method_name}(self, *args)
+            end
+          METHOD
+        end
       end
-      
-      def local_instance_methods
-        Starter::Extensions::Module.local_instance_methods(self)
-      end
+
+      self.create_instance_methods(self)
       
     end
 
