@@ -13,7 +13,7 @@ directory "lib"
 file "lib/#{project_name}.rb" do |target|
   File.open(target.name, "w") do |file|
     file.puts <<-TXT
-module #{Starter::String.camel_case(project_name)}
+module #{Starter::Extensions::String.camel_case(project_name)}
 
 end
     TXT

@@ -13,7 +13,7 @@ end
 def readme(options)
   project_name = options[:project_name]
   text = <<-TXT
-# #{Starter::String.camel_case(project_name)}
+# #{Starter::Extensions::String.camel_case(project_name)}
 
   TXT
 end
