@@ -4,16 +4,20 @@ module Starter
   module Extensions
 
     module Module
+      
+      def self.basename(mod)
+        mod.name.split('::').last
+      end
 
       def self.local_methods(mod)
-        mod.methods.select do |m|
+        mod.public_methods.select do |m|
           owner = mod.method(m).owner
           owner == mod.singleton_class || owner == mod
         end
       end
       
       def self.local_instance_methods(mod)
-        mod.instance_methods.select do |m|
+        mod.public_instance_methods.select do |m|
           owner = mod.instance_method(m).owner
           owner == mod
         end

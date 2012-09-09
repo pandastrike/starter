@@ -20,7 +20,7 @@ end
   end
 end
 
-file gemspec_path => %w[ determine_author ] do |target|
+file gemspec_path do |target|
   File.open(target.name, "w") do |file|
     file.puts gemspec_template(
       :author => $STARTER[:author],
@@ -51,6 +51,15 @@ task "gem:dependencies" => "gemspec" do
   require "pp"
   pp gemspec.dependencies.first
   # install dependencies from gemspec
+
+	#require 'rubygems/dependency_installer'
+	#gems = Gem::SourceIndex.from_installed_gems
+	#installer = Gem::DependencyInstaller.new
+	#spec.dependencies.each do |dep|
+		#if gems.find_name(dep.name, dep.requirement).empty?
+			#installer.install(dep.name, dep.requirement)
+		#end
+	#end
 end
 
 task "version" => "read_gemspec" do

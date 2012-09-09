@@ -1,19 +1,22 @@
 require "pp"
-require "starter/string"
+require "starter/extensions/string"
 require "git"
 
 $STARTER ||= {}
 
 $STARTER[:directory] = File.basename(Dir.pwd)
 
+# Interface task declarations
+
 desc "Bootstrap your project"
-task "bootstrap"
+task "bootstrap" => "determine_author"
 
 desc "Build everything that needs building"
 task "build"
 
 desc "Release the dogs that shoot bees from their mouths"
 task "release" => %w[ build ]
+
 
 task "determine_author" => %w[ read_git_config ] do
   if author = $STARTER[:git].config["user.name"]
