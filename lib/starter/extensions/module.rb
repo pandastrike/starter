@@ -19,6 +19,11 @@ module Starter
         end
       end
 
+      # For every locally-defined class method, create an instance method
+      # of the same name which operates on the instance.  This allows you
+      # to create Modules which can be used as mixins, but the methods are
+      # also available on the module itself, in case a user does not want
+      # to include the module.
       def self.create_instance_methods(mod)
         self.local_methods(mod).each do |method_name|
           mod.module_eval <<-METHOD, __FILE__, __LINE__
