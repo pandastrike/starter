@@ -18,6 +18,16 @@ task "npm:publish" do
   sh "npm publish"
 end
 
+task "version" => "read_package" do
+  pp $STARTER[:version] = $STARTER[:npm_package][:version]
+end
+
+task "read_package" do
+  require "json"
+  string = File.read("package.json")
+  $STARTER[:npm_package] = JSON.parse(string, :symbolize_names => true)
+end
+
 
 
 def package(options={})
