@@ -11,7 +11,7 @@ task "github:issue" => "github_repo" do
     $stdout.print "Title: "; $stdout.flush
     options[:title] = $stdin.readline.strip
     $stdout.print "Description: "; $stdout.flush
-    options[:description] = $stdin.readline.strip
+    options[:body] = $stdin.readline.strip
     $stdout.print "Labels (separate with spaces: [#{labels}]): "; $stdout.flush
     options[:labels] = $stdin.readline.strip.split(" ")
     if milestones.size > 0
