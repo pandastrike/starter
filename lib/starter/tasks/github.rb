@@ -4,30 +4,37 @@ desc "Create an issue on GitHub"
 task "github:issue" => "github_repo" do
 
   repo = $STARTER[:github_repo]
-  options = {}
-  $stdout.print "Title: "; $stdout.flush
-  options[:title] = $stdin.readline.strip
-  $stdout.print "Description: "; $stdout.flush
-  options[:description] = $stdin.readline.strip
-  labels = repo.labels.map { |label| label["name"] }.join(" ")
-  $stdout.print "Labels (separate with spaces: [#{labels}]): "; $stdout.flush
-  options[:labels] = $stdin.readline.strip.split(" ")
-  $stdout.puts "Milestone:"
-  repo.milestones.each do |milestone|
-    $stdout.puts "#{milestone['number']} - #{milestone['title']}"
-  end
-  milestone = $stdin.readline.strip
-  options[:milestone] = milestone unless milestone.empty?
+  loop do
+    options = {}
+    $stdout.print "Title: "; $stdout.flush
+    options[:title] = $stdin.readline.strip
+    $stdout.print "Description: "; $stdout.flush
+    options[:description] = $stdin.readline.strip
+    labels = repo.labels.map { |label| label["name"] }.join(" ")
+    $stdout.print "Labels (separate with spaces: [#{labels}]): "; $stdout.flush
+    options[:labels] = $stdin.readline.strip.split(" ")
+    $stdout.puts "Milestone:"
+    repo.milestones.each do |milestone|
+      $stdout.puts "#{milestone['number']} - #{milestone['title']}"
+    end
+    milestone = $stdin.readline.strip
+    options[:milestone] = milestone unless milestone.empty?
 
-  print "Issue details: "
-  if Starter::Prompt.confirm("Create this issue?")
-    result = repo.issues.create(options)
-    if result["errors"]
-      result["errors"].each do |error|
-        $stderr.puts "#{error['resource']}: #{error['message']}"
+    print "Issue details: "
+    pp options
+    if Starter::Prompt.confirm("Create this issue?")
+      result = repo.issues.create(options)
+      if result["errors"]
+        result["errors"].each do |error|
+          $stderr.puts "#{error['resource']}: #{error['message']}"
+        end
+        exit
+      else
+        $stdout.puts "Issue ##{result['number']} created."
+        unless Starter::Prompt.confirm("Create another?")
+          break
+        end
       end
-    else
-      $stdout.puts "Issue ##{result['number']} created."
     end
   end
 end
