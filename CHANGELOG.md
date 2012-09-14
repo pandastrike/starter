@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.4
+
+* "version" task for npm projects
+
 ## 0.1.3
 
 * github oauth token usage
