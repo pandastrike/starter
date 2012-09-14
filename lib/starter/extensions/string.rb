@@ -15,6 +15,7 @@ module Starter
       end
 
       def self.title_case(string)
+        # FIXME: I think that the block form of gsub is not thread safe.
         string.gsub( /\b\w/ ) { |x| x.upcase }
       end
 

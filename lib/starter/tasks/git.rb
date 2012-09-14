@@ -1,4 +1,4 @@
-require "starter/tasks/helpers"
+require "starter/tasks/starter"
 
 task "release" => %w[ git:tag ]
 

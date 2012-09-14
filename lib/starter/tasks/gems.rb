@@ -1,4 +1,4 @@
-require "starter/tasks/helpers"
+require "starter/tasks/starter"
 
 gemspec_path = FileList["*.gemspec"].first || "#{$STARTER[:directory]}.gemspec"
 project_name = gemspec_path.chomp(".gemspec")

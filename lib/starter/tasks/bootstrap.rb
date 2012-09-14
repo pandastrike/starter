@@ -1,4 +1,4 @@
-require "starter/tasks/helpers"
+require "starter/tasks/starter"
 
 $STARTER[:directory] = File.basename(Dir.pwd)
 $STARTER[:gemspec_file] = "#{$STARTER[:directory]}.gemspec"

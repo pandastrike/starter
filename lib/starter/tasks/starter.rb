@@ -1,4 +1,5 @@
 require "pp"
+require "starter/prompt"
 require "starter/extensions/string"
 require "git"
 
@@ -22,7 +23,7 @@ task "determine_author" => %w[ read_git_config ] do
   if author = $STARTER[:git].config["user.name"]
     $STARTER[:author] = author
   else
-    $STARTER[:author] = prompt("Project author?")
+    $STARTER[:author] = Starter::Prompt.prompt("Project author?")
   end
 end
 
@@ -31,10 +32,9 @@ task "read_git_config" do
   $STARTER[:git] = g
 end
 
+
 def confirm_command(command)
-  print "Issue command '#{command}' [y/N] "
-  case STDIN.gets.chomp
-  when /^y/i
+  if Starter::Prompt.confirm("Issue command '#{command}'?")
     sh command
   else
     puts "Cancelled."
@@ -42,14 +42,4 @@ def confirm_command(command)
   end
 end
 
-def prompt(string)
-  print "#{string} "
-  value = STDIN.gets.chomp
-  if value.size > 1
-    return value
-  else
-    puts "No, I really need a value. Try again."
-    prompt(string)
-  end
-end
 
