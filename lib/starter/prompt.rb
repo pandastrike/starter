@@ -16,7 +16,10 @@ module Starter
 
     def confirm(string)
       print "#{string} [y/N] "
-      true if STDIN.gets.chomp =~ /^y/i
+      if STDIN.gets.chomp =~ /^y/i
+        yield if block_given?
+        return true
+      end
     end
 
   end

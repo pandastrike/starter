@@ -24,13 +24,15 @@ task "github:issue" => "github_repo" do
     end
 
     print "Issue details: "
-    pp options
     if Starter::Prompt.confirm("Create this issue?")
       result = repo.issues.create(options)
       if result["errors"]
         result["errors"].each do |error|
           $stderr.puts "#{error['resource']}: #{error['message']}"
         end
+        exit
+      elsif result["message"]
+        $stderr.puts "Problem creating issue:", result["message"]
         exit
       else
         $stdout.puts "Issue ##{result['number']} created."
@@ -52,12 +54,12 @@ task "github:issues" => "github_repo" do
 end
 
 
-task "github_repo" => %w[ github_settings github_password ] do
+task "github_repo" => %w[ github_settings github_auth ] do
   require 'ghee'
 
   settings = $STARTER[:settings][:github]
-  user, password, repo = settings.values_at(:user, :password, :repo)
-  ghee = Ghee.basic_auth(user,password)
+  repo = settings[:repo]
+  ghee = Ghee.access_token(settings[:auth])
 
   repo = ghee.repos(repo[:owner], repo[:name])
   if repo["message"]
@@ -69,12 +71,26 @@ task "github_repo" => %w[ github_settings github_password ] do
 
 end
 
-
-task "github_password" => "github_settings" do
+task "github_auth" => "github_settings" do
   require "starter/password"
-  if $STARTER[:settings][:github][:password] == nil
+  require 'ghee'
+  settings = $STARTER[:settings][:github]
+  if File.exists?(".gh_auth") && auth = File.read(".gh_auth")
+    settings[:auth] = auth.chomp
+  else
     password = Starter::Password.request("GitHub")
-    $STARTER[:settings][:github][:password] = password
+    user = $STARTER[:settings][:github][:user]
+    auth = Ghee.create_token(user, password, ["user", "repo"])
+    if auth
+      settings[:auth] = auth
+      Starter::Prompt.confirm("Write auth token to .gh_auth?") do
+        File.open(".gh_auth", "w") { |f| f.print(auth) }
+        puts "Make sure to add .gh_auth to your .gitignore"
+      end
+    else
+      puts "Authentication failure"
+      exit
+    end
   end
 end
 
