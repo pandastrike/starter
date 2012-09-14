@@ -4,21 +4,24 @@ desc "Create an issue on GitHub"
 task "github:issue" => "github_repo" do
 
   repo = $STARTER[:github_repo]
+  labels = repo.labels.map { |label| label["name"] }.join(" ")
+  milestones = repo.milestones
   loop do
     options = {}
     $stdout.print "Title: "; $stdout.flush
     options[:title] = $stdin.readline.strip
     $stdout.print "Description: "; $stdout.flush
     options[:description] = $stdin.readline.strip
-    labels = repo.labels.map { |label| label["name"] }.join(" ")
     $stdout.print "Labels (separate with spaces: [#{labels}]): "; $stdout.flush
     options[:labels] = $stdin.readline.strip.split(" ")
-    $stdout.puts "Milestone:"
-    repo.milestones.each do |milestone|
-      $stdout.puts "#{milestone['number']} - #{milestone['title']}"
+    if milestones.size > 0
+      $stdout.puts "Milestone:"
+      repo.milestones.each do |milestone|
+        $stdout.puts "#{milestone['number']} - #{milestone['title']}"
+      end
+      milestone = $stdin.readline.strip
+      options[:milestone] = milestone unless milestone.empty?
     end
-    milestone = $stdin.readline.strip
-    options[:milestone] = milestone unless milestone.empty?
 
     print "Issue details: "
     pp options
@@ -31,11 +34,12 @@ task "github:issue" => "github_repo" do
         exit
       else
         $stdout.puts "Issue ##{result['number']} created."
-        unless Starter::Prompt.confirm("Create another?")
-          break
-        end
       end
     end
+    unless Starter::Prompt.confirm("Create another?")
+      break
+    end
+
   end
 end
 
