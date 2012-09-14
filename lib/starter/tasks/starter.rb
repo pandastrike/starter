@@ -18,6 +18,11 @@ task "build"
 desc "Release the dogs that shoot bees from their mouths"
 task "release" => %w[ build ]
 
+directory ".starter"
+
+task ".starter" do
+  gitignore(".starter")
+end
 
 task "determine_author" => %w[ read_git_config ] do
   if author = $STARTER[:git].config["user.name"]
@@ -42,4 +47,11 @@ def confirm_command(command)
   end
 end
 
+def gitignore(string)
+  Starter::Prompt.confirm "Append #{string} to your .gitignore?" do
+    File.open(".gitignore", "a") do |f|
+      f.puts(string)
+    end
+  end
+end
 

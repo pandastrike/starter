@@ -1,3 +1,2 @@
 *.gem
-settings.yml
-.gh_auth
+.starter
