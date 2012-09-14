@@ -43,6 +43,14 @@ task "github:issue" => "github_repo" do
   end
 end
 
+task "github:issues" => "github_repo" do
+  repo = $STARTER[:github_repo]
+  repo.issues.each do |issue|
+    line = "#%-6i %s" % issue.values_at(*%w[ number title ])
+    puts line
+  end
+end
+
 
 task "github_repo" => %w[ github_settings github_password ] do
   require 'ghee'
