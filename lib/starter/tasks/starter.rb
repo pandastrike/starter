@@ -9,13 +9,10 @@ $STARTER[:directory] = File.basename(Dir.pwd)
 
 # Interface task declarations
 
-desc "Bootstrap your project"
-task "bootstrap" => "determine_author"
-
-desc "Build everything that needs building"
+#desc "Build everything that needs building"
 task "build"
 
-desc "Release the dogs that shoot bees from their mouths"
+#desc "Release the dogs that shoot bees from their mouths"
 task "release" => %w[ build ]
 
 directory ".starter"

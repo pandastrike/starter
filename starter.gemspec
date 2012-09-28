@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = "starter"
-  s.version = "0.1.4"
+  s.version = "0.1.6"
   s.authors = ["Matthew King"]
   s.homepage = "https://github.com/automatthew/starter"
   s.summary = "Generally useful and reusable things"
@@ -11,6 +11,8 @@ Gem::Specification.new do |s|
     README.md
   ] + Dir["lib/**/*"]
   s.require_path = "lib"
+  s.add_dependency("git")
+  s.add_dependency("ghee")
 
 end
 

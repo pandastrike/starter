@@ -29,6 +29,7 @@ file gemspec_path do |target|
   end
 end
 
+desc "Build everything that needs building"
 task "build" => %w[ gem:build ]
 
 desc "build a gem using #{gemspec_path}"

@@ -1,4 +1,4 @@
-
+require "starter/tasks/starter"
 
 task "bootstrap" => %w[ package.json ]
 
@@ -7,14 +7,16 @@ file "package.json" => %w[ determine_author ] do |target|
 end
 
 
-task "npm:release" => %w[ npm:publish ]
+desc "publish as an NPM package"
+task "release" => %w[ npm:publish ]
 
-task "npm:publish" do
-  sh "npm publish"
+task "npm:publish" => %w[ version ] do
+  puts "Version in package.json is #{$STARTER[:version]}"
+  confirm_command("npm publish")
 end
 
 task "version" => "read_package" do
-  pp $STARTER[:version] = $STARTER[:npm_package][:version]
+  $STARTER[:version] = $STARTER[:npm_package][:version]
 end
 
 # this seems like it ought to be a function? leaving it here because it seems
