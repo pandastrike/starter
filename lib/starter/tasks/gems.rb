@@ -47,20 +47,19 @@ task "gem:push" do
   end
 end
 
-task "gem:dependencies" => "gemspec" do
+task "gem:deps" => "read_gemspec" do
   gemspec = $STARTER[:gemspec]
-  require "pp"
-  pp gemspec.dependencies.first
-  # install dependencies from gemspec
 
-	#require 'rubygems/dependency_installer'
-	#gems = Gem::SourceIndex.from_installed_gems
-	#installer = Gem::DependencyInstaller.new
-	#spec.dependencies.each do |dep|
-		#if gems.find_name(dep.name, dep.requirement).empty?
-			#installer.install(dep.name, dep.requirement)
-		#end
-	#end
+  require 'rubygems/dependency_installer'
+  installer = Gem::DependencyInstaller.new
+  gemspec.dependencies.each do |dep|
+    begin
+      Gem::Specification.find_by_name(dep.name, dep.requirement)
+    rescue LoadError
+      puts "Installing dependency: #{dep.name} #{dep.requirement}"
+      installer.install(dep.name, dep.requirement)
+    end
+  end
 end
 
 task "version" => "read_gemspec" do
