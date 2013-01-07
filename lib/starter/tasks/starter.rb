@@ -22,7 +22,7 @@ task ".starter" do
 end
 
 task "determine_author" => %w[ read_git_config ] do
-  if author = $STARTER[:git].config["user.name"]
+  if (git = $STARTER[:git]) && (author = git.config["user.name"])
     $STARTER[:author] = author
   else
     $STARTER[:author] = Starter::Prompt.prompt("Project author?")
@@ -30,8 +30,10 @@ task "determine_author" => %w[ read_git_config ] do
 end
 
 task "read_git_config" do
-  g = Git.open(Dir.pwd)
-  $STARTER[:git] = g
+  if File.exist?(".git")
+    g = Git.open(Dir.pwd)
+    $STARTER[:git] = g
+  end
 end
 
 
