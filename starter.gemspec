@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = "starter"
-  s.version = "0.1.7"
+  s.version = "0.1.8"
   s.authors = ["Matthew King"]
   s.homepage = "https://github.com/automatthew/starter"
   s.summary = "Generally useful and reusable things"
@@ -13,6 +13,7 @@ Gem::Specification.new do |s|
   s.require_path = "lib"
   s.add_dependency("git")
   s.add_dependency("ghee")
+  s.add_dependency("term-ansicolor")
 
 end
 
