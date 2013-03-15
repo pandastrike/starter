@@ -80,6 +80,21 @@ module Starter
       end
     end
 
+    def gfm_toc(string)
+      toc = []
+      string.each_line do |line|
+        regex = %r{^(\#{1,8})\s+(.+)$}
+        if match = regex.match(line)
+          _all, hashes, text = match.to_a
+          depth = hashes.size - 1
+          text = text.strip
+          anchor = text.downcase.gsub(/[\s]+/, "-").tr(":`", "")
+          puts anchor.inspect
+          toc << ("    " * depth) + "* [#{text}](##{anchor})"
+        end
+      end
+      toc.join("\n") + "\n\n" + string
+    end
 
   end
 
