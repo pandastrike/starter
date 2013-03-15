@@ -53,6 +53,25 @@ task "github:issues" => "github_repo" do
   end
 end
 
+desc "show issues for current milestone on GitHub"
+task "github:milestones:current" => "github_repo" do
+  repo = $STARTER[:github_repo]
+  milestones = repo.milestones
+  sorted = milestones.sort_by {|m| m["due_on"] || "0" }
+  current = sorted.last
+
+  issues =  repo.issues(:milestone => current.number).select do |issue|
+    issue["assignee"]
+  end.sort_by do |issue|
+    issue["assignee"]["login"]
+  end
+
+  issues.each do |issue|
+    login = issue["assignee"]["login"]
+    puts "* #{login} - [#{issue.number}](#{issue.html_url}) - #{issue.title}"
+  end
+end
+
 
 task "github_repo" => %w[ github_settings github_auth ] do
   require 'ghee'
