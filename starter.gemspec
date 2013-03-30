@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = "starter"
-  s.version = "0.1.9"
+  s.version = "0.1.10"
   s.authors = ["Matthew King"]
   s.homepage = "https://github.com/automatthew/starter"
   s.summary = "Generally useful and reusable things"

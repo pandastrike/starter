@@ -1,7 +1,7 @@
 require "starter/tasks/starter"
 
 desc "Create an issue on GitHub"
-task "github:issue" => "github_repo" do
+task "github:issues:create" => "github_repo" do
 
   repo = $STARTER[:github_repo]
   labels = repo.labels.map { |label| label["name"] }.join(" ")
@@ -45,11 +45,41 @@ task "github:issue" => "github_repo" do
   end
 end
 
+
+def format_issue(issue, format="plain")
+  if issue["assignee"]
+    login = issue["assignee"]["login"]
+  else
+    login = nil
+  end
+  case format
+  when "markdown"
+    "* #{login || "<unassigned>"} - [#{issue.number}](#{issue.html_url}) - #{issue.title}"
+  when "plain"
+    "* %-16s - %-4s - %s" % [login, "##{issue.number}", issue.title]
+  else
+    raise "Unknown format for issue printing: '#{format}'"
+  end
+end
+
+desc "show GitHub issues. Optional labels= and format="
 task "github:issues" => "github_repo" do
   repo = $STARTER[:github_repo]
-  repo.issues.each do |issue|
-    line = "#%-6i %s" % issue.values_at(*%w[ number title ])
-    puts line
+  options = {}
+  require "pp"
+  if labels = ENV["labels"] || ENV["label"]
+    options[:labels] = labels
+  end
+  format = ENV["format"] || "plain"
+
+  issues = []
+  repo.issues(options).each do |issue|
+    issues << format_issue(issue, format)
+  end
+  if issues.size > 0
+    puts
+    puts issues
+    puts
   end
 end
 
