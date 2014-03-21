@@ -3,7 +3,7 @@ require "starter/tasks/starter"
 desc "Create an issue on GitHub"
 task "github:issues:create" => "github_repo" do
 
-  repo = $STARTER[:github_repo]
+  repo = Starter.cache[:github_repo]
   labels = repo.labels.map { |label| label["name"] }.join(" ")
   milestones = repo.milestones
 
@@ -64,7 +64,7 @@ end
 
 desc "show GitHub issues. Optional labels= and format="
 task "github:issues" => "github_repo" do
-  repo = $STARTER[:github_repo]
+  repo = Starter.cache[:github_repo]
   options = {}
   require "pp"
   if labels = ENV["labels"] || ENV["label"]
@@ -85,7 +85,7 @@ end
 
 desc "show issues for current milestone on GitHub"
 task "github:milestones:current" => "github_repo" do
-  repo = $STARTER[:github_repo]
+  repo = Starter.cache[:github_repo]
   milestones = repo.milestones
   sorted = milestones.sort_by {|m| m["due_on"] || "0" }
   current = sorted.last
@@ -106,7 +106,7 @@ end
 task "github_repo" => %w[ github_settings github_auth ] do
   require 'ghee'
 
-  settings = $STARTER[:settings][:github]
+  settings = Starter.cache[:settings][:github]
   repo = settings[:repo]
   ghee = Ghee.access_token(settings[:auth])
 
@@ -115,7 +115,7 @@ task "github_repo" => %w[ github_settings github_auth ] do
     puts repo["message"]
     exit
   else
-    $STARTER[:github_repo] = repo
+    Starter.cache[:github_repo] = repo
   end
 
 end
@@ -123,12 +123,12 @@ end
 task "github_auth" => %w[ github_settings .starter ] do
   require "starter/password"
   require 'ghee'
-  settings = $STARTER[:settings][:github]
+  settings = Starter.cache[:settings][:github]
   if File.exists?(".starter/gh_auth") && auth = File.read(".starter/gh_auth")
     settings[:auth] = auth.chomp
   else
     password = Starter::Password.request("GitHub")
-    user = $STARTER[:settings][:github][:user]
+    user = Starter.cache[:settings][:github][:user]
     auth = Ghee.create_token(user, password, ["user", "repo"])
     if auth
       settings[:auth] = auth
@@ -146,7 +146,7 @@ end
 task "read_settings" => ".starter" do
   require "yaml"
   begin
-    $STARTER[:settings] = YAML.load_file(".starter/settings.yml")
+    Starter.cache[:settings] = YAML.load_file(".starter/settings.yml")
   rescue Errno::ENOENT
     $stderr.puts "You do not appear to have a .starter/settings.yml file."
     if Starter::Prompt.confirm("Create a stubbed settings file?")
@@ -154,7 +154,7 @@ task "read_settings" => ".starter" do
         settings = {
           :github => {
             :user => "YOURUSERNAME",
-            :repo => {:owner => "OWNERNAME", :name => $STARTER[:directory]}
+            :repo => {:owner => "OWNERNAME", :name => Starter.cache[:directory]}
           }
         }
         YAML.dump(settings, f)
@@ -167,7 +167,7 @@ end
 
 
 task "github_settings" => "read_settings" do
-  if $STARTER[:settings][:github] == nil
+  if Starter.cache[:settings][:github] == nil
     $stderr.puts "Looks like your .starter/settings.yml file isn't set up with a github stanza."
     exit
   end

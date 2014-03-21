@@ -1,14 +1,14 @@
 require "starter/tasks/starter"
 
-$STARTER[:directory] = File.basename(Dir.pwd)
-$STARTER[:gemspec_file] = "#{$STARTER[:directory]}.gemspec"
+Starter.cache[:directory] = File.basename(Dir.pwd)
+Starter.cache[:gemspec_file] = "#{Starter.cache[:directory]}.gemspec"
 
 desc "Bootstrap your project"
 task "bootstrap" => %w[ LICENSE ]
 
 file "LICENSE" => %w[ determine_author ] do
   File.open("LICENSE", "w") do |file|
-    file.puts mit_license(:author => $STARTER[:author])
+    file.puts mit_license(:author => Starter.cache[:author])
   end
 end
 

@@ -1,11 +1,17 @@
 require "pp"
+
+module Starter
+  def self.cache
+    @cache ||= {}
+  end
+end
+
 require "starter/prompt"
 require "starter/extensions/string"
 require "git"
 
-$STARTER ||= {}
 
-$STARTER[:directory] = File.basename(Dir.pwd)
+Starter.cache[:directory] = File.basename(Dir.pwd)
 
 # Interface task declarations
 
@@ -22,17 +28,17 @@ task ".starter" do
 end
 
 task "determine_author" => %w[ read_git_config ] do
-  if (git = $STARTER[:git]) && (author = git.config["user.name"])
-    $STARTER[:author] = author
+  if (git = Starter.cache[:git]) && (author = git.config["user.name"])
+    Starter.cache[:author] = author
   else
-    $STARTER[:author] = Starter::Prompt.prompt("Project author?")
+    Starter.cache[:author] = Starter::Prompt.prompt("Project author?")
   end
 end
 
 task "read_git_config" do
   if File.exist?(".git")
     g = Git.open(Dir.pwd)
-    $STARTER[:git] = g
+    Starter.cache[:git] = g
   end
 end
 

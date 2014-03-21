@@ -4,7 +4,7 @@ task "bootstrap" => %w[ README.md ]
 file "README.md" do |target|
    File.open(target.name, "w") do |file|
     file.puts readme(
-      :project_name => $STARTER[:directory]
+      :project_name => Starter.cache[:directory]
     )
   end 
 end

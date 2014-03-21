@@ -1,6 +1,6 @@
 require "starter/tasks/starter"
 
-gemspec_path = FileList["*.gemspec"].first || "#{$STARTER[:directory]}.gemspec"
+gemspec_path = FileList["*.gemspec"].first || "#{Starter.cache[:directory]}.gemspec"
 project_name = gemspec_path.chomp(".gemspec")
 
 task "bootstrap" => [ gemspec_path, "lib", "lib/#{project_name}.rb" ]
@@ -23,8 +23,8 @@ end
 file gemspec_path do |target|
   File.open(target.name, "w") do |file|
     file.puts gemspec_template(
-      :author => $STARTER[:author],
-      :project_name => $STARTER[:directory]
+      :author => Starter.cache[:author],
+      :project_name => Starter.cache[:directory]
     )
   end
 end
@@ -47,8 +47,9 @@ task "gem:push" do
   end
 end
 
+desc "Install dependencies from the gemspec"
 task "gem:deps" => "read_gemspec" do
-  gemspec = $STARTER[:gemspec]
+  gemspec = Starter.cache[:gemspec]
 
   require 'rubygems/dependency_installer'
   installer = Gem::DependencyInstaller.new
@@ -63,11 +64,11 @@ task "gem:deps" => "read_gemspec" do
 end
 
 task "version" => "read_gemspec" do
-  $STARTER[:version] = $STARTER[:gemspec].version.version
+  Starter.cache[:version] = Starter.cache[:gemspec].version.version
 end
 
 task "read_gemspec" do
-  $STARTER[:gemspec] = read_gemspec(gemspec_path)
+  Starter.cache[:gemspec] = read_gemspec(gemspec_path)
 end
 
 task "clean" do

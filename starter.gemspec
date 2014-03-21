@@ -11,9 +11,10 @@ Gem::Specification.new do |s|
     README.md
   ] + Dir["lib/**/*"]
   s.require_path = "lib"
-  s.add_dependency("git")
-  s.add_dependency("ghee")
-  s.add_dependency("term-ansicolor")
+
+  s.add_dependency("git", "~> 1.2.6")
+  s.add_dependency("ghee", "~> 0.9.11")
+  s.add_dependency("term-ansicolor", "~> 1.3.0")
 
 end
 
