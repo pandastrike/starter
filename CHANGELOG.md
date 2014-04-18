@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.12
+
+* Starter::Markdown::Extender
+
 ## 0.1.4
 
 * "version" task for npm projects
