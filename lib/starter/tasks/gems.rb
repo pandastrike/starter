@@ -5,8 +5,6 @@ project_name = gemspec_path.chomp(".gemspec")
 
 task "bootstrap" => [ gemspec_path, "lib", "lib/#{project_name}.rb" ]
 
-task "release" => %w[ gem:push ]
-
 
 directory "lib"
 
@@ -35,16 +33,6 @@ task "build" => %w[ gem:build ]
 desc "build a gem using #{gemspec_path}"
 task "gem:build" do
   sh "gem build #{gemspec_path}"
-end
-
-task "gem:push" do
-  gemfiles = FileList["#{project_name}-*.gem"]
-  if gemfiles.size == 1
-    command = "gem push #{gemfiles.first}"
-    confirm_command(command)
-  else
-    puts "Found more than one gemfile in the working directory."
-  end
 end
 
 desc "Install dependencies from the gemspec"
