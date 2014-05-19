@@ -4,7 +4,7 @@ desc "push rubygem"
 task "release" => %w[ gem:push ]
 
 task "gem:push" do
-  gemfiles = FileList["#{project_name}-*.gem"]
+  gemfiles = FileList["#{Starter.cache[:project_name]}-*.gem"]
   if gemfiles.size == 1
     command = "gem push #{gemfiles.first}"
     confirm_command(command)

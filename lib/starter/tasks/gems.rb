@@ -1,7 +1,8 @@
 require "starter/tasks/starter"
 
+
 gemspec_path = FileList["*.gemspec"].first || "#{Starter.cache[:directory]}.gemspec"
-project_name = gemspec_path.chomp(".gemspec")
+Starter.cache[:project_name] = project_name = gemspec_path.chomp(".gemspec")
 
 task "bootstrap" => [ gemspec_path, "lib", "lib/#{project_name}.rb" ]
 
@@ -48,6 +49,22 @@ task "gem:deps" => "read_gemspec" do
       puts "Installing dependency: #{dep.name} #{dep.requirement}"
       installer.install(dep.name, dep.requirement)
     end
+  end
+end
+
+task "gem:deps:list" => "read_gemspec" do
+  gemspec = Starter.cache[:gemspec]
+  runtime, dev = gemspec.dependencies.partition do |dep|
+    dep.type == :runtime
+  end
+  puts "Runtime:"
+  runtime.each do |dep|
+    puts "  #{dep}"
+  end
+  puts
+  puts "Development:"
+  dev.each do |dep|
+    puts "  #{dep}"
   end
 end
 
