@@ -1,5 +1,7 @@
 # Starter
 
+> **Important** This project is deprecated and unsupported.
+
 Starter is the place where I collect all the code that should be reusable, but which I've been copying and pasting here, there, and behind you.
 
 Rake tasks:
